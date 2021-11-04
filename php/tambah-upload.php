@@ -1,6 +1,7 @@
 <?php
-include("./vendor/autoload.php");
-
+session_start();
+include '../conf/koneksi.php';
+include "../vendor/autoload.php";
 class Keranjang
 {
     var $oracle_region = "ap-sydney-1";
@@ -15,21 +16,9 @@ class Keranjang
         $filename = substr(date("Y"), 2, 4) . date("mdHis");
 
         if (!empty($_FILES['gambar_1']['tmp_name'])) {
-            // move_uploaded_file(
-            //     $_FILES['gambar_1']['tmp_name'],
-            //     './component/bukti_pembayaran/' . 'BT_' . $filename . '.' . pathinfo($_FILES['gambar_1']['name'], PATHINFO_EXTENSION)
-            // );
             $gambar1  = 'BT_' . $filename . '.' . pathinfo($_FILES['gambar_1']['name'], PATHINFO_EXTENSION);
-
-            // if ($input['gambar_1_old'] != '') {
-            //     $path1   = './component/bukti_pembayaran/' . $input['gambar_1_old'];
-            //     unlink($path1);
-            // }
-
-            // $this->upload_file_oracle('mrshop-bukti_pembayaran', '', $_FILES['gambar_1']['tmp_name']);
             $bucket_name = "4_sekolah";
             $file_uri = $_FILES['gambar_1']['tmp_name'];
-
             $keyname = $gambar1;
             $endpoint =  "{$bucket_name}/{$keyname}";
             $s3 = $this->get_oracle_client($endpoint);
@@ -63,8 +52,6 @@ class Keranjang
         } else {
             $data['response'] = 'gagal';
         }
-
-
         echo json_encode($data);
     }
 
