@@ -40,7 +40,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="php/proses-login.php"><b>Admin</b>LTE</a>
+    <a href="php/proses-login.php"><b>Admin</b>Sekolah</a>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
