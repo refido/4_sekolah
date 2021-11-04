@@ -14,7 +14,7 @@ session_start();
       unset($_SESSION['message']);
     }
   ?>
-  <form method="POST" action="upload.php" enctype="multipart/form-data">
+  <form method="POST" action="../php/tambah-upload.php" enctype="multipart/form-data">
     <div>
       <span>Upload a File:</span>
       <input type="file" name="uploadedFile" />
