@@ -7,9 +7,9 @@
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->
-  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://objectstorage.ap-sydney-1.oraclecloud.com/n/sdlnnagqepsh/b/4_sekolah/o/bootstrap%2Fcss%2Fbootstrap.min.css">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://objectstorage.ap-sydney-1.oraclecloud.com/n/sdlnnagqepsh/b/4_sekolah/o/font-awesome%2F4.5.0%2Fcss%2Ffont-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="ionicons/ionicons.min.css">
   <!-- Theme style -->
@@ -22,7 +22,7 @@
   <!-- Morris chart -->
   <link rel="stylesheet" href="plugins/morris/morris.css">
   <!-- jvectormap -->
-  <link rel="stylesheet" href="plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+  <link rel="stylesheet" href="https://objectstorage.ap-sydney-1.oraclecloud.com/n/sdlnnagqepsh/b/4_sekolah/o/plugins%2Fjvectormap%2Fjquery-jvectormap-1.2.2.css">
   <!-- Date Picker -->
   <link rel="stylesheet" href="plugins/datepicker/datepicker3.css">
   <!-- Daterange picker -->
