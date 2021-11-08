@@ -1,50 +1,147 @@
 <?php
-session_start();
+defined('BASEPATH') or exit('No direct script access allowed');
+include("./vendor/autoload.php");
 
-$message = ''; 
-if (isset($_POST['uploadBtn']) && $_POST['uploadBtn'] == 'Upload')
+class Keranjang extends MY_Controller
 {
-  if (isset($_FILES['uploadedFile']) && $_FILES['uploadedFile']['error'] === UPLOAD_ERR_OK)
-  {
-    // get details of the uploaded file
-    $fileTmpPath = $_FILES['uploadedFile']['tmp_name'];
-    $fileName = $_FILES['uploadedFile']['name'];
-    $fileSize = $_FILES['uploadedFile']['size'];
-    $fileType = $_FILES['uploadedFile']['type'];
-    $fileNameCmps = explode(".", $fileName);
-    $fileExtension = strtolower(end($fileNameCmps));
+    var $oracle_region = "ap-sydney-1";
+    var $oracle_access_key = "79dca448f7dfe562e9cccde8f701cf5fa65fc579";
+    var $oracle_secret_key = "xNjtSiQHZQaTEFu0Ffld4PXraRrZKN7ylRC7wVf3eUk=";
+    var $oracle_namespace = "sdlnnagqepsh";
 
-    // sanitize file-name
-    $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
-
-    // check if file has one of the following extensions
-    $allowedfileExtensions = array('jpg', 'gif', 'png', 'zip', 'txt', 'xls', 'doc');
-
-    if (in_array($fileExtension, $allowedfileExtensions))
+    public function __construct()
     {
-      // directory in which the uploaded file will be moved
-      $uploadFileDir = '../uploaded_files/';
-      $dest_path = $uploadFileDir . $newFileName;
+        parent::__construct();
+        if ($this->session->userdata('usersession') == FALSE) {
+            redirect(base_url('web'));
+        }
+    }
 
-      if(move_uploaded_file($fileTmpPath, $dest_path)) 
-      {
-        $message ='File is successfully uploaded.';
-      }
-      else 
-      {
-        $message = 'There was some error moving the file to upload directory. Please make sure the upload directory is writable by web server.';
-      }
-    }
-    else
+    public function index()
     {
-      $message = 'Upload failed. Allowed file types: ' . implode(',', $allowedfileExtensions);
+        $data['konten'] = $this->load->view('keranjang', NULL, TRUE);
+        $this->load->view('main', $data);
     }
-  }
-  else
-  {
-    $message = 'There is some error in the file upload. Please check the following error.<br>';
-    $message .= 'Error:' . $_FILES['uploadedFile']['error'];
-  }
+    public function transaksi()
+    {
+        $data['konten'] = $this->load->view('transaksi', NULL, TRUE);
+        $this->load->view('main', $data);
+    }
+    public function hapus()
+    {
+        $input = $this->input->post();
+
+        $this->db->where('id', $input['id']);
+        $this->db->delete('opsi_transaksi_temp');
+        echo $this->db->last_query();
+    }
+    public function masuk_transaksi()
+    {
+        $input = $this->input->post();
+        $user = $this->session->userdata('usersession');
+
+
+        $this->db->from('opsi_transaksi_temp');
+        $this->db->join('data_produk', 'data_produk.id = opsi_transaksi_temp.id_produk', 'left');
+        $this->db->where('opsi_transaksi_temp.id_user', $user->id);
+        $get_data = $this->db->get()->result();
+        $biaya_total = 0;
+        foreach ($get_data as $key => $value) {
+            $input['kode_transaksi'] = $input['kode_transaksi'];
+            $input['id_produk'] = $value->id_produk;
+            $input['jumlah'] = $value->jumlah;
+            $input['keterangan'] = $value->keterangan;
+            $biaya_total += ($value->jumlah * $value->harga);
+
+            $get = $this->db->insert('opsi_transaksi', $input);
+
+            $this->db->where('id', $value->id_produk);
+            $get_produk = $this->db->get('data_produk')->row();
+
+            $input3['stok'] = ((int)$get_produk->stok - (int)$value->jumlah);
+            $this->db->where('id', $value->id_produk);
+            $this->db->update('data_produk', $input3);
+        }
+        $input2['status'] = 'Belum Dibayar';
+        $input2['tgl_transaksi'] = date('Y-m-d');
+        $input2['kode_transaksi'] = $input['kode_transaksi'];
+        $input2['id_user'] = $user->id;
+        $input2['biaya_total'] = ($biaya_total + 34000);
+        $this->db->insert('transaksi', $input2);
+
+
+        if (!empty($get)) {
+            $this->db->where('id_user', $user->id);
+            $this->db->delete('opsi_transaksi_temp');
+        }
+        $awan['respon'] = 'sukses';
+        echo json_encode($awan);
+    }
+    public function update_transaksi()
+    {
+        $input = $this->input->post();
+
+        $filename = substr(date("Y"), 2, 4) . date("mdHis");
+
+        if (!empty($_FILES['gambar_1']['tmp_name'])) {
+         
+            $gambar1  = 'BT_' . $filename . '.' . pathinfo($_FILES['gambar_1']['name'], PATHINFO_EXTENSION);
+
+            $bucket_name = "mrshop-bukti_pembayaran";
+            $file_uri = $_FILES['gambar_1']['tmp_name'];
+
+            $keyname = $gambar1;
+            $endpoint =  "{$bucket_name}/{$keyname}";
+            $s3 = $this->get_oracle_client($endpoint);
+            $s3->getEndpoint();
+
+            $file_url = "https://objectstorage." . $this->oracle_region . ".oraclecloud.com/n/" . $this->oracle_namespace . "/b/{$bucket_name}/o/{$keyname}";
+            try {
+                $s3->putObject(array(
+                    'Bucket' => $bucket_name,
+                    'Key' => $keyname,
+                    'SourceFile' => $file_uri,
+                    'ContentType' => 'image/jpeg',
+                    'StorageClass' => 'REDUCED_REDUNDANCY'
+                ));
+
+                $input2['bukti_transfer'] = $gambar1;
+            } catch (S3Exception $e) {
+                return array('success' => false, 'message' => $e->getMessage());
+            } catch (Exception $e) {
+                return array('success' => false, 'message' => $e->getMessage());
+            }
+            $input2['status'] = 'Menunggu';
+        } else {
+            $input2['status'] = 'Menunggu';
+            unset($input['gambar_1_old']);
+        }
+        $this->db->where('kode_transaksi', $input['kode_transaksi']);
+        $insert = $this->db->update('transaksi', $input2);
+        if ($insert) {
+            $data['response'] = 'sukses';
+        } else {
+            $data['response'] = 'gagal';
+        }
+
+
+        echo json_encode($data);
+    }
+
+
+    function get_oracle_client($endpoint)
+    {
+        $endpoint = "https://" . $this->oracle_namespace . ".compat.objectstorage." . $this->oracle_region . ".oraclecloud.com/{$endpoint}";
+
+        return new Aws\S3\S3Client(array(
+            'credentials' => [
+                'key' => $this->oracle_access_key,
+                'secret' => $this->oracle_secret_key,
+            ],
+            'version' => 'latest',
+            'region' => $this->oracle_region,
+            'bucket_endpoint' => true,
+            'endpoint' => $endpoint
+        ));
+    }
 }
-$_SESSION['message'] = $message;
-echo '<script>window.location="../pages/index.php?page=upfot"</script>';
