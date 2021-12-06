@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  php-apache-evironment:
+    image: r3v1/4_sekolah-docker
+    container_name: php-apache
+    depens_on:
+      - db
+    volumes:
+      - ./php/src:/var/www/html/
+    ports: 
+      - 8090:80
+    networks:
+      - backend
+
+  db:
+    container_name: db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWROD: !Pol123Lop!
+      MYSQL_DATABASE: rapor_lte
+    ports:
+      - "3306:3306:
+    volumes:
+      - db:/var/lib/mysql
+      - ./rapor_lte.sql:/docker-entrypoint-initdb.d/rapor_lte.sql
+    networks:
+      - backend
+
+volumes:
+  db:
+
+networks:
+  backend:
+    name: backend-network
+    ipam:
+      driver: default
+      config:
+        -subnet: 10.0.0.96/24
