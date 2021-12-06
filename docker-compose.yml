@@ -15,11 +15,12 @@ services:
   db:
     container_name: db
     image: mysql
+    command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      MYSQL_USER: 'admin'
-      MYSQL_PASSWORD: '!Pol123Lop!'
-      MYSQL_ROOT_PASSWORD: '!Pol123Lop!'
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 
+      MYSQL_ROOT_PASSWORD:
       MYSQL_DATABASE: rapor_lte
     ports:
       - "3306:3306"
@@ -38,4 +39,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.20.0.0/24
+        - subnet: 10.0.0.0/24
