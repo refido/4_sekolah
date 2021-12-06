@@ -3,7 +3,7 @@ services:
   php-apache-environment:
     image: r3v1/4_sekolah-docker
     container_name: php-apache
-    depens_on:
+    depends_on:
       - db
     volumes:
       - ./php/src:/var/www/html/
@@ -17,7 +17,7 @@ services:
     image: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: "!Pol123Lop!"
+      MYSQL_ROOT_PASSWORD: !Pol123Lop!
       MYSQL_DATABASE: rapor_lte
     ports:
       - "3306:3306"
