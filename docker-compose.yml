@@ -23,7 +23,7 @@ services:
       MYSQL_ROOT_PASSWORD: '!Pol123Lop'
       MYSQL_DATABASE: rapor_lte
     ports:
-      - 3306:3306'
+      - '3306:3306'
     expose:
       - '3306'
     volumes:
