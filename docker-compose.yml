@@ -19,11 +19,13 @@ services:
     restart: always
     environment:
       MYSQL_USER: admin
-      MYSQL_PASSWORD: 
-      MYSQL_ROOT_PASSWORD:
+      MYSQL_PASSWORD: '!Pol123Lop!'
+      MYSQL_ROOT_PASSWORD: '!Pol123Lop'
       MYSQL_DATABASE: rapor_lte
     ports:
-      - "3306:3306"
+      - 3306:3306'
+    expose:
+      - '3306'
     volumes:
       - db:/var/lib/mysql
       - ./rapor_lte.sql:/docker-entrypoint-initdb.d/rapor_lte.sql
@@ -39,4 +41,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 10.0.0.0/24
+        - subnet: 172.19.0.0/24
