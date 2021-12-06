@@ -17,7 +17,9 @@ services:
     image: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: '!Pol123Lop!'
+      MYSQL_ROOT_PASSWORD: '!Pol123Lop!'
       MYSQL_DATABASE: rapor_lte
     ports:
       - "3306:3306"
@@ -36,4 +38,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 10.0.0.0/24
+        - subnet: 172.20.0.0/24
