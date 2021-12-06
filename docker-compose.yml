@@ -8,7 +8,7 @@ services:
     volumes:
       - ./php/src:/var/www/html/
     ports: 
-      - 8090:80
+      - 8000:80
     networks:
       - backend
 
@@ -17,7 +17,7 @@ services:
     image: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: "!Pol123Lop!"
+      MYSQL_ROOT_PASSWORD: admin
       MYSQL_DATABASE: rapor_lte
     ports:
       - "3306:3306"
