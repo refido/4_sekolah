@@ -28,12 +28,12 @@ services:
       - db:/var/lib/mysql
       - ./rapor_lte.sql:/docker-entrypoint-initdb.d/rapor_lte.sql
 
-    phpmyadmin:
-      image: phpmyadmin/phpmyadmin
-      ports:
-        - "8888:80"
-      restart: always
-      environment:
-        PMA_HOST: db
-      depends_on:
-        - db
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8888:80"
+    restart: always
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
