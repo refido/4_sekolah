@@ -30,7 +30,6 @@ CREATE TABLE `admin` (
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
-INSERT INTO `admin` VALUES ('1', 'Sofia Jeni Agustina', 'sofia@gmail.com', 'sofia');
 INSERT INTO `admin` VALUES ('1', 'refi', 'refi@berliano', 'refi'); 
 -- ----------------------------
 -- Table structure for guru

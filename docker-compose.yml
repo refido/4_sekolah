@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./php/src:/var/www/html/
+      - ./4_sekolah/html:/var/www/4_sekolah/html/
     ports: 
       - "8000:80"
 
