@@ -24,9 +24,6 @@ services:
       MYSQL_PASSWORD: "!Pol123Lop!"
     ports:
       - '3306:3306'
-    volumes:
-      - db:/var/lib/mysql
-      - ./rapor_lte.sql:/docker-entrypoint-initdb.d/rapor_lte.sql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
