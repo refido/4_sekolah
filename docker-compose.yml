@@ -3,40 +3,37 @@ services:
   php-apache-environment:
     image: r3v1/4_sekolah-docker
     container_name: php-apache
+    build: 
+      context: ./php
+      dockerfile: Dockerfile
     depends_on:
       - db
     volumes:
       - ./php/src:/var/www/html/
     ports: 
       - 8000:80
-    networks:
-      - backend
 
   db:
     container_name: db
     image: mysql
     restart: always
     environment:
-      MYSQL_USER: admin
-      MYSQL_ROOT_PASSWORD: '!Pol123Lop'
+      MYSQL_ROOT_PASSWORD: "!Pol123Lop!"
       MYSQL_DATABASE: rapor_lte
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: "!Pol123Lop!"
     ports:
       - '3306:3306'
-    expose:
-      - '3306'
     volumes:
       - db:/var/lib/mysql
       - ./rapor_lte.sql:/docker-entrypoint-initdb.d/rapor_lte.sql
-    networks:
-      - backend
 
-volumes:
-  db:
-
-networks:
-  backend:
-    name: backend-network
-    ipam:
-      driver: default
-      config:
-        - subnet: 170.20.0.0/24
+    phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      ports:
+        - "8888:80"
+      restart: always
+      environment:
+        PMA_HOST: db
+      depends_on:
+        - db
